@@ -47,7 +47,7 @@ const scrollingSpeed = 2;
 const updateEvery = 10;
 
 // Rendering
-const y = (768 - targetPlatformHeight - 100);
+const y = (512 - targetPlatformHeight - 50);
 
 init = () => {
   platformTileset.src = 'assets/platform-tileset.png';
