@@ -39,10 +39,6 @@ class Platform {
     return this.updateEvery;
   }
 
-  clearCanvas() {
-    this.context.clearRect(0, 0, this.canvas.width + this.platformScroll, this.canvas.height);
-  };
-
   wasPlatformAlreadyDrawnOnce(platformIndex) {
     return this.platforms[platformIndex] !== undefined;
   };
@@ -69,15 +65,17 @@ class Platform {
     return this.previousElementIsGap(previousIndex);
   };
 
+  update() {
+    this.increasePlatformScroll();
+  }
+
   draw() {
     this.resetX();
-    this.clearCanvas();
+    this.context.save();
+    this.scrollPlatform();
 
     // Always draw 3 tiles more, otherwise there's ugly popping up
     let platformIndexMax = Math.ceil(this.canvas.width / targetPlatformWidth) + 3;
-
-    this.context.save();
-    this.scrollPlatform();
 
     for (let platformIndex = 0; platformIndex < platformIndexMax; platformIndex++) {
       if (!this.willPlatformStillBeVisible()) {
@@ -101,7 +99,6 @@ class Platform {
 
   scrollPlatform() {
     this.context.translate(-this.platformScroll, 0);
-    this.increasePlatformScroll();
   };
 
   randomDecisionForPlatform() {
