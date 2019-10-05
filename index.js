@@ -83,6 +83,10 @@ currentElementIsGap = (platformIndex) => {
   return platforms[platformIndex] === 'gap';
 };
 
+currentElementIsPlatform = (platformIndex) => {
+  return platforms[platformIndex] !== 'gap';
+};
+
 previousElementIsGap = (platformIndex) => {
   const previousIndex = platformIndex - 1;
   return platforms[previousIndex] === 'gap';
@@ -139,23 +143,27 @@ scrollPlatform = () => {
   platformScroll = platformScroll + scrollingSpeed;
 };
 
+randomDecisionForPlatform = () => {
+  return Math.random() >= 0.4;
+};
+
 isPlatform = (platformIndex) => {
-  let isPlatform = false;
   const isFirstPlatform = platformIndex === 0;
 
+  let isThisAPlatform = false;
   if (wasPlatformAlreadyDrawnOnce(platformIndex)) {
-    isPlatform = !currentElementIsGap(platformIndex);
+    isThisAPlatform = currentElementIsPlatform(platformIndex);
   } else if (isFirstPlatform) {
-    isPlatform = true;
+    isThisAPlatform = true;
   } else if (previousElementIsGap(platformIndex)) {
     // Make sure a gap is never longer than one element
-    isPlatform = true;
-  } else if (Math.random() >= 0.4) {
+    isThisAPlatform = true;
+  } else if (randomDecisionForPlatform()) {
     // Randomly decide if drawing platform or gap
-    isPlatform = true;
+    isThisAPlatform = true;
   }
 
-  return isPlatform;
+  return isThisAPlatform;
 };
 
 drawSinglePlatform = (platformIndex, x) => {
