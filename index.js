@@ -49,9 +49,9 @@ const updateEvery = 10;
 // Rendering
 const y = (768 - targetPlatformHeight - 100);
 
-draw = () => {
+init = () => {
   platformTileset.src = 'assets/platform-tileset.png';
-  platformTileset.addEventListener('load', drawPlatform);
+  platformTileset.addEventListener('load', draw);
 };
 
 clearCanvas = (canvas) => {
@@ -84,11 +84,11 @@ previousElementIsGap = (platformIndex) => {
   return platforms[previousIndex] === 'gap';
 };
 
-drawPlatform = () => {
+draw = () => {
   const currentTime = getCurrentTime();
 
   if (!shallUpdate()) {
-    requestAnimationFrame(drawPlatform);
+    requestAnimationFrame(draw);
     return;
   }
 
@@ -143,7 +143,7 @@ drawPlatform = () => {
 
   context.restore();
 
-  requestAnimationFrame(drawPlatform);
+  requestAnimationFrame(draw);
 };
 
 drawSinglePlatform = (platformIndex, x) => {
@@ -180,4 +180,4 @@ increaseX = (x) => {
   return x + targetPlatformWidth;
 };
 
-draw();
+init();
