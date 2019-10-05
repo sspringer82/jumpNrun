@@ -1,3 +1,4 @@
+const platformTileset = new Image();
 let lastUpdate = new Date().getTime();
 
 // Platform dimensions
@@ -49,11 +50,8 @@ const updateEvery = 10;
 const y = (768 - targetPlatformHeight - 100);
 
 draw = () => {
-  const img = new Image();
-  img.src = 'assets/platform-tileset.png';
-  img.addEventListener('load', () => {
-    drawPlatform(img);
-  });
+  platformTileset.src = 'assets/platform-tileset.png';
+  platformTileset.addEventListener('load', drawPlatform);
 };
 
 clearCanvas = (canvas) => {
@@ -86,11 +84,11 @@ previousElementIsGap = (platformIndex) => {
   return platforms[previousIndex] === 'gap';
 };
 
-drawPlatform = (img) => {
+drawPlatform = () => {
   const currentTime = getCurrentTime();
 
   if (!shallUpdate()) {
-    requestAnimationFrame(() => drawPlatform(img));
+    requestAnimationFrame(drawPlatform);
     return;
   }
 
@@ -137,7 +135,7 @@ drawPlatform = (img) => {
     }
 
     if (shallDrawPlatform) {
-      drawSinglePlatform(img, platformIndex, x);
+      drawSinglePlatform(platformIndex, x);
     }
 
     x = increaseX(x);
@@ -145,10 +143,10 @@ drawPlatform = (img) => {
 
   context.restore();
 
-  requestAnimationFrame(() => drawPlatform(img));
+  requestAnimationFrame(drawPlatform);
 };
 
-drawSinglePlatform = (img, platformIndex, x) => {
+drawSinglePlatform = (platformIndex, x) => {
   const canvas = document.getElementById('tutorial');
   const context = canvas.getContext('2d');
   const nextIndex = platformIndex + 1;
@@ -172,7 +170,7 @@ drawSinglePlatform = (img, platformIndex, x) => {
     }
   }
 
-  context.drawImage(img, platformToDraw.x, platformToDraw.y, sourcePlatformWidth, sourcePlatformHeight, x, y, targetPlatformWidth, targetPlatformHeight);
+  context.drawImage(platformTileset, platformToDraw.x, platformToDraw.y, sourcePlatformWidth, sourcePlatformHeight, x, y, targetPlatformWidth, targetPlatformHeight);
 
   // Hitbox
   // context.strokeRect(x, y, targetPatternWidth, targetPatternHeight);
