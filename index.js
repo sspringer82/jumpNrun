@@ -1,27 +1,17 @@
 let platformOffset = 0;
 
-function draw() {
-  const canvas = document.getElementById('tutorial');
-  const context = canvas.getContext('2d');
-
-  const img = new Image();
-  img.src = 'assets/platform-tileset.png';
-  img.addEventListener('load', () => {
-    drawPlatform(img);
-  });
-}
-
 const patternWidth = 282;
 const patternHeight = 256;
 
 const targetPatternWidth = patternWidth / 2;
 const targetPatternHeight = (patternHeight / 2);
 
-clearPlatform = (canvas) => {
-  const context = canvas.getContext('2d');
+const normalTileLabels = ['normal', 'oneflower', 'threeflowers'];
 
-  context.clearRect(0, targetPatternHeight * 3, canvas.width, targetPatternHeight);
-};
+const scrollingSpeed = 2;
+const updateEvery = 10;
+let lastUpdate = new Date().getTime();
+const tiles = {};
 
 const normalTiles = {
   normal: {
@@ -54,12 +44,22 @@ const endTiles = {
   }
 };
 
-const normalTileLabels = ['normal', 'oneflower', 'threeflowers'];
+function draw() {
+  const canvas = document.getElementById('tutorial');
+  const context = canvas.getContext('2d');
 
-const scrollingSpeed = 2;
-const updateEvery = 10;
-let lastUpdate = new Date().getTime();
-const tiles = {};
+  const img = new Image();
+  img.src = 'assets/platform-tileset.png';
+  img.addEventListener('load', () => {
+    drawPlatform(img);
+  });
+}
+
+clearPlatform = (canvas) => {
+  const context = canvas.getContext('2d');
+
+  context.clearRect(0, targetPatternHeight * 3, canvas.width, targetPatternHeight);
+};
 
 drawPlatform = (img) => {
   const currentTime = new Date().getTime();
