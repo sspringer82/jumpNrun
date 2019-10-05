@@ -6,32 +6,41 @@ const targetPlatformHeight = (sourcePlatformHeight / 2);
 
 // Scrolling
 const scrollingSpeed = 2;
-const updateEvery = 10;
 
 class Platform {
   constructor() {
-    this.lastUpdate = new Date().getTime();
     this.platforms = {};
     this.x = 0;
     this.y = (512 - targetPlatformHeight - 50);
     this.canvas = document.getElementById('tutorial');
     this.context = this.canvas.getContext('2d');
     this.platformScroll = 0;
+
+    this.updateEvery = 10;
+
+    this.platformTileset = new Image();
+  }
+
+  init() {
+    const promise = new Promise((resolve, reject) => {
+      this.platformTileset.addEventListener('load', resolve);
+    });
+
+    this.platformTileset.src = 'assets/platform-tileset.png';
+
+    return promise;
+  }
+
+  getName() {
+    return 'Platform';
+  }
+
+  getUpdateEvery() {
+    return this.updateEvery;
   }
 
   clearCanvas() {
     this.context.clearRect(0, 0, this.canvas.width + this.platformScroll, this.canvas.height);
-  };
-
-  getCurrentTime() {
-    return new Date().getTime();
-  };
-
-  shallUpdate() {
-    const currentTime = this.getCurrentTime();
-    const timeDelta = currentTime - this.lastUpdate;
-
-    return timeDelta >= updateEvery;
   };
 
   wasPlatformAlreadyDrawnOnce(platformIndex) {
@@ -61,16 +70,7 @@ class Platform {
   };
 
   draw() {
-    if (!this.shallUpdate()) {
-      requestAnimationFrame(this.draw.bind(this));
-      return;
-    }
-
-    const currentTime = this.getCurrentTime();
-
     this.resetX();
-
-    this.lastUpdate = currentTime;
     this.clearCanvas();
 
     // Always draw 3 tiles more, otherwise there's ugly popping up
@@ -97,8 +97,6 @@ class Platform {
     }
 
     this.context.restore();
-
-    requestAnimationFrame(this.draw.bind(this));
   };
 
   scrollPlatform() {
@@ -152,7 +150,7 @@ class Platform {
       }
     }
 
-    this.context.drawImage(platformTileset, platformToDraw.x, platformToDraw.y, sourcePlatformWidth, sourcePlatformHeight, this.x, this.y, targetPlatformWidth, targetPlatformHeight);
+    this.context.drawImage(this.platformTileset, platformToDraw.x, platformToDraw.y, sourcePlatformWidth, sourcePlatformHeight, this.x, this.y, targetPlatformWidth, targetPlatformHeight);
 
     // Hitbox
     // context.strokeRect(x, y, targetPlatformWidth, targetPlatformHeight);

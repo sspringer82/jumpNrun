@@ -1,10 +1,8 @@
-const platformTileset = new Image();
-
 init = () => {
+  const renderer = new Renderer();
   const platform = new Platform();
 
-  platformTileset.src = 'assets/platform-tileset.png';
-  platformTileset.addEventListener('load', platform.draw.bind(platform));
+  platform.init().then(() => renderer.subscribe(platform));
 };
 
 init();
