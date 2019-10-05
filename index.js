@@ -133,22 +133,7 @@ drawPlatform = (img) => {
 
       context.drawImage(img, tileToDraw.x, tileToDraw.y, patternWidth, patternHeight, x, y, targetPatternWidth, targetPatternHeight);
 
-      // Tile on left end
-      // context.drawImage(img, 577, 76, patternWidth, patternHeight, x, y, targetPatternWidth, targetPatternHeight);
-
-      // Tile on right end
-      // context.drawImage(img, 1290, 76, patternWidth, patternHeight, x, y, targetPatternWidth, targetPatternHeight);
-
-      // Tile with three flowers
-      // context.drawImage(img, 625, 435, patternWidth, patternHeight, x, y, targetPatternWidth, targetPatternHeight);
-
-      // normal tile
-      // context.drawImage(img, 946, 435, patternWidth, patternHeight, x, y, targetPatternWidth, targetPatternHeight);
-
-      // tile with 1 flower
-      // context.drawImage(img, 1286, 435, patternWidth, patternHeight, x, y, targetPatternWidth, targetPatternHeight);
-
-
+      // Hitbox
       // context.strokeRect(x, y, targetPatternWidth, targetPatternHeight);
     } else {
       tiles[drawnTiles] = 'gap';
