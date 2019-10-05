@@ -1,4 +1,4 @@
-let platformOffset = 0;
+let platformScroll = 0;
 
 const patternWidth = 282;
 const patternHeight = 256;
@@ -59,7 +59,7 @@ draw = () => {
 clearCanvas = (canvas) => {
   const context = canvas.getContext('2d');
 
-  context.clearRect(0, 0, canvas.width + platformOffset, canvas.height);
+  context.clearRect(0, 0, canvas.width + platformScroll, canvas.height);
 };
 
 getCurrentTime = () => {
@@ -98,13 +98,13 @@ drawPlatform = (img) => {
   let tilesMax = Math.ceil(canvas.width / targetPatternWidth) + 3;
 
   context.save();
-  context.translate(-platformOffset, 0);
-  platformOffset = platformOffset + scrollingSpeed;
+  context.translate(-platformScroll, 0);
+  platformScroll = platformScroll + scrollingSpeed;
 
   for (let drawnTiles = 0; drawnTiles < tilesMax; drawnTiles++) {
     const alreadyDrawnTile = tiles[drawnTiles] !== undefined;
 
-    const isStillVisible = x + targetPatternWidth * 2 - platformOffset > 0;
+    const isStillVisible = x + targetPatternWidth * 2 - platformScroll > 0;
     if (!isStillVisible) {
       delete tiles[drawnTiles];
       x = increaseX(x);
