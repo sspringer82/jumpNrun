@@ -92,6 +92,11 @@ previousElementIsGap = (platformIndex) => {
   return platforms[previousIndex] === 'gap';
 };
 
+previousElementIsFirstElementAfterGap = (platformIndex) => {
+  const previousIndex = platformIndex - 1;
+  return previousElementIsGap(previousIndex);
+};
+
 draw = () => {
   if (!shallUpdate()) {
     requestAnimationFrame(draw);
@@ -157,6 +162,8 @@ willBePlatform = (platformIndex) => {
     isThisAPlatform = true;
   } else if (previousElementIsGap(platformIndex)) {
     // Make sure a gap is never longer than one element
+    isThisAPlatform = true;
+  } else if (previousElementIsFirstElementAfterGap(platformIndex)) {
     isThisAPlatform = true;
   } else if (randomDecisionForPlatform()) {
     // Randomly decide if drawing platform or gap
