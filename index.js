@@ -73,6 +73,10 @@ shallUpdate = () => {
   return timeDelta >= updateEvery;
 };
 
+wasPlatformAlreadyDrawnOnce = (platformIndex) => {
+  return platforms[platformIndex] !== undefined;
+};
+
 drawPlatform = (img) => {
   const currentTime = getCurrentTime();
 
@@ -92,62 +96,61 @@ drawPlatform = (img) => {
   // draw until screen is filled horizontally
   let isFirstPlatform = true;
   let shallDrawPlatform = true;
-  let previouslyDrawnGap = true;
+  let previousElementIsGap = true;
 
   // Draw 1 tile more, otherwise there's ugly popping up
-  let tilesMax = Math.ceil(canvas.width / targetPlatformWidth) + 3;
+  let platformIndexMax = Math.ceil(canvas.width / targetPlatformWidth) + 3;
 
   context.save();
   context.translate(-platformScroll, 0);
   platformScroll = platformScroll + scrollingSpeed;
 
-  for (let drawnTiles = 0; drawnTiles < tilesMax; drawnTiles++) {
-    const alreadyDrawnTile = platforms[drawnTiles] !== undefined;
+  for (let platformIndex = 0; platformIndex < platformIndexMax; platformIndex++) {
 
-    const isStillVisible = x + targetPlatformWidth * 2 - platformScroll > 0;
-    if (!isStillVisible) {
-      delete platforms[drawnTiles];
+    const isPlatformStillVisible = x + targetPlatformWidth * 2 - platformScroll > 0;
+    if (!isPlatformStillVisible) {
+      delete platforms[platformIndex];
       x = increaseX(x);
-      tilesMax++;
+      platformIndexMax++;
       continue;
     }
 
-    if (alreadyDrawnTile) {
-      shallDrawPlatform = platforms[drawnTiles] !== 'gap';
+    if (wasPlatformAlreadyDrawnOnce(platformIndex)) {
+      shallDrawPlatform = platforms[platformIndex] !== 'gap';
     } else {
       isFirstPlatform = x < sourcePlatformWidth;
-      previouslyDrawnGap = !shallDrawPlatform;
+      previousElementIsGap = !shallDrawPlatform;
       // Randomly decide if drawing platform or nothing
-      shallDrawPlatform = isFirstPlatform || previouslyDrawnGap || Math.random() >= 0.4;
+      shallDrawPlatform = isFirstPlatform || previousElementIsGap || Math.random() >= 0.4;
     }
 
     if (shallDrawPlatform) {
-      let tileToDraw;
+      let platformToDraw;
       // If the next tile is empty, draw a right tile
-      const nextIndex = drawnTiles + 1;
-      const previousIndex = drawnTiles - 1;
+      const nextIndex = platformIndex + 1;
+      const previousIndex = platformIndex - 1;
       if(platforms[nextIndex] === 'gap') {
-        tileToDraw = edgePlatforms.right;
+        platformToDraw = edgePlatforms.right;
       } else if (platforms[previousIndex] === 'gap') {
-        tileToDraw = edgePlatforms.left;
+        platformToDraw = edgePlatforms.left;
       } else {
 
-        if (alreadyDrawnTile) {
-          const tileToDrawLabel = platforms[drawnTiles];
-          tileToDraw = normalPlatforms[tileToDrawLabel];
+        if (wasPlatformAlreadyDrawnOnce(platformIndex)) {
+          const tileToDrawLabel = platforms[platformIndex];
+          platformToDraw = normalPlatforms[tileToDrawLabel];
         } else {
           const tileToDrawLabel = normalPlatformLabels[Math.floor(Math.random() * normalPlatformLabels.length)];
-          tileToDraw = normalPlatforms[tileToDrawLabel];
-          platforms[drawnTiles] = tileToDrawLabel;
+          platformToDraw = normalPlatforms[tileToDrawLabel];
+          platforms[platformIndex] = tileToDrawLabel;
         }
       }
 
-      context.drawImage(img, tileToDraw.x, tileToDraw.y, sourcePlatformWidth, sourcePlatformHeight, x, y, targetPlatformWidth, targetPlatformHeight);
+      context.drawImage(img, platformToDraw.x, platformToDraw.y, sourcePlatformWidth, sourcePlatformHeight, x, y, targetPlatformWidth, targetPlatformHeight);
 
       // Hitbox
       // context.strokeRect(x, y, targetPatternWidth, targetPatternHeight);
     } else {
-      platforms[drawnTiles] = 'gap';
+      platforms[platformIndex] = 'gap';
     }
 
     x = increaseX(x);
