@@ -79,7 +79,12 @@ wasPlatformAlreadyDrawnOnce = (platformIndex) => {
 
 willPlatformStillBeVisible = (x) => {
   return x + (targetPlatformWidth * 2) - platformScroll > 0;
-}
+};
+
+previousElementIsGap = (platformIndex) => {
+  const previousIndex = platformIndex - 1;
+  return platforms[previousIndex] === 'gap';
+};
 
 drawPlatform = (img) => {
   const currentTime = getCurrentTime();
@@ -106,9 +111,6 @@ drawPlatform = (img) => {
 
   for (let platformIndex = 0; platformIndex < platformIndexMax; platformIndex++) {
     const nextIndex = platformIndex + 1;
-    const previousIndex = platformIndex - 1;
-
-    const previousElementIsGap = platforms[previousIndex] === 'gap';
 
     if (!willPlatformStillBeVisible(x)) {
       delete platforms[platformIndex];
@@ -117,47 +119,25 @@ drawPlatform = (img) => {
       continue;
     }
 
-    let shallDrawPlatform = true;
+    let shallDrawPlatform = false;
     const isFirstPlatform = platformIndex === 0;
 
     if (wasPlatformAlreadyDrawnOnce(platformIndex)) {
       shallDrawPlatform = platforms[platformIndex] !== 'gap';
     } else if (isFirstPlatform) {
       shallDrawPlatform = true;
-    } else if (previousElementIsGap) {
+    } else if (previousElementIsGap(platformIndex)) {
       // Make sure a gap is never longer than one element
       shallDrawPlatform = true;
-    } else {
+    } else if (Math.random() >= 0.4) {
       // Randomly decide if drawing platform or gap
-      shallDrawPlatform = Math.random() >= 0.4;
+      shallDrawPlatform = true;
+    } else {
+      platforms[platformIndex] = 'gap';
     }
 
     if (shallDrawPlatform) {
-      let platformToDraw;
-
-      // If the next platform is empty, draw a right tile
-      if(platforms[nextIndex] === 'gap') {
-        platformToDraw = edgePlatforms.right;
-      } else if (previousElementIsGap) {
-        platformToDraw = edgePlatforms.left;
-      } else {
-
-        if (wasPlatformAlreadyDrawnOnce(platformIndex)) {
-          const tileToDrawLabel = platforms[platformIndex];
-          platformToDraw = normalPlatforms[tileToDrawLabel];
-        } else {
-          const tileToDrawLabel = normalPlatformLabels[Math.floor(Math.random() * normalPlatformLabels.length)];
-          platformToDraw = normalPlatforms[tileToDrawLabel];
-          platforms[platformIndex] = tileToDrawLabel;
-        }
-      }
-
-      context.drawImage(img, platformToDraw.x, platformToDraw.y, sourcePlatformWidth, sourcePlatformHeight, x, y, targetPlatformWidth, targetPlatformHeight);
-
-      // Hitbox
-      // context.strokeRect(x, y, targetPatternWidth, targetPatternHeight);
-    } else {
-      platforms[platformIndex] = 'gap';
+      drawSinglePlatform(img, platformIndex, x);
     }
 
     x = increaseX(x);
@@ -166,6 +146,36 @@ drawPlatform = (img) => {
   context.restore();
 
   requestAnimationFrame(() => drawPlatform(img));
+};
+
+drawSinglePlatform = (img, platformIndex, x) => {
+  const canvas = document.getElementById('tutorial');
+  const context = canvas.getContext('2d');
+  const nextIndex = platformIndex + 1;
+
+  let platformToDraw;
+
+  // If the next platform is empty, draw a right tile
+  if(platforms[nextIndex] === 'gap') {
+    platformToDraw = edgePlatforms.right;
+  } else if (previousElementIsGap(platformIndex)) {
+    platformToDraw = edgePlatforms.left;
+  } else {
+
+    if (wasPlatformAlreadyDrawnOnce(platformIndex)) {
+      const tileToDrawLabel = platforms[platformIndex];
+      platformToDraw = normalPlatforms[tileToDrawLabel];
+    } else {
+      const tileToDrawLabel = normalPlatformLabels[Math.floor(Math.random() * normalPlatformLabels.length)];
+      platformToDraw = normalPlatforms[tileToDrawLabel];
+      platforms[platformIndex] = tileToDrawLabel;
+    }
+  }
+
+  context.drawImage(img, platformToDraw.x, platformToDraw.y, sourcePlatformWidth, sourcePlatformHeight, x, y, targetPlatformWidth, targetPlatformHeight);
+
+  // Hitbox
+  // context.strokeRect(x, y, targetPatternWidth, targetPatternHeight);
 };
 
 increaseX = (x) => {
