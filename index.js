@@ -79,37 +79,37 @@ willPlatformStillBeVisible = (x) => {
   return x + (targetPlatformWidth * 2) - platformScroll > 0;
 };
 
+currentElementIsGap = (platformIndex) => {
+  return platforms[platformIndex] === 'gap';
+};
+
 previousElementIsGap = (platformIndex) => {
   const previousIndex = platformIndex - 1;
   return platforms[previousIndex] === 'gap';
 };
 
 draw = () => {
-  const currentTime = getCurrentTime();
-
   if (!shallUpdate()) {
     requestAnimationFrame(draw);
     return;
   }
 
-  lastUpdate = currentTime;
-
+  const currentTime = getCurrentTime();
   const canvas = document.getElementById('tutorial');
   const context = canvas.getContext('2d');
+
   let x = 0;
 
+  lastUpdate = currentTime;
   clearCanvas(canvas);
 
-  // Draw 3 tiles more, otherwise there's ugly popping up
+  // Always draw 3 tiles more, otherwise there's ugly popping up
   let platformIndexMax = Math.ceil(canvas.width / targetPlatformWidth) + 3;
 
   context.save();
-  context.translate(-platformScroll, 0);
-  platformScroll = platformScroll + scrollingSpeed;
+  scrollPlatform();
 
   for (let platformIndex = 0; platformIndex < platformIndexMax; platformIndex++) {
-    const nextIndex = platformIndex + 1;
-
     if (!willPlatformStillBeVisible(x)) {
       delete platforms[platformIndex];
       x = increaseX(x);
@@ -117,25 +117,10 @@ draw = () => {
       continue;
     }
 
-    let shallDrawPlatform = false;
-    const isFirstPlatform = platformIndex === 0;
-
-    if (wasPlatformAlreadyDrawnOnce(platformIndex)) {
-      shallDrawPlatform = platforms[platformIndex] !== 'gap';
-    } else if (isFirstPlatform) {
-      shallDrawPlatform = true;
-    } else if (previousElementIsGap(platformIndex)) {
-      // Make sure a gap is never longer than one element
-      shallDrawPlatform = true;
-    } else if (Math.random() >= 0.4) {
-      // Randomly decide if drawing platform or gap
-      shallDrawPlatform = true;
-    } else {
-      platforms[platformIndex] = 'gap';
-    }
-
-    if (shallDrawPlatform) {
+    if (isPlatform(platformIndex)) {
       drawSinglePlatform(platformIndex, x);
+    } else {
+      drawSingleGap(platformIndex);
     }
 
     x = increaseX(x);
@@ -144,6 +129,33 @@ draw = () => {
   context.restore();
 
   requestAnimationFrame(draw);
+};
+
+scrollPlatform = () => {
+  const canvas = document.getElementById('tutorial');
+  const context = canvas.getContext('2d');
+
+  context.translate(-platformScroll, 0);
+  platformScroll = platformScroll + scrollingSpeed;
+};
+
+isPlatform = (platformIndex) => {
+  let isPlatform = false;
+  const isFirstPlatform = platformIndex === 0;
+
+  if (wasPlatformAlreadyDrawnOnce(platformIndex)) {
+    isPlatform = !currentElementIsGap(platformIndex);
+  } else if (isFirstPlatform) {
+    isPlatform = true;
+  } else if (previousElementIsGap(platformIndex)) {
+    // Make sure a gap is never longer than one element
+    isPlatform = true;
+  } else if (Math.random() >= 0.4) {
+    // Randomly decide if drawing platform or gap
+    isPlatform = true;
+  }
+
+  return isPlatform;
 };
 
 drawSinglePlatform = (platformIndex, x) => {
@@ -173,7 +185,11 @@ drawSinglePlatform = (platformIndex, x) => {
   context.drawImage(platformTileset, platformToDraw.x, platformToDraw.y, sourcePlatformWidth, sourcePlatformHeight, x, y, targetPlatformWidth, targetPlatformHeight);
 
   // Hitbox
-  // context.strokeRect(x, y, targetPatternWidth, targetPatternHeight);
+  // context.strokeRect(x, y, targetPlatformWidth, targetPlatformHeight);
+};
+
+drawSingleGap = (platformIndex) => {
+  platforms[platformIndex] = 'gap';
 };
 
 increaseX = (x) => {
