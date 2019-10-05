@@ -121,7 +121,7 @@ draw = () => {
       continue;
     }
 
-    if (isPlatform(platformIndex)) {
+    if (willBePlatform(platformIndex)) {
       drawSinglePlatform(platformIndex, x);
     } else {
       drawSingleGap(platformIndex);
@@ -147,7 +147,7 @@ randomDecisionForPlatform = () => {
   return Math.random() >= 0.4;
 };
 
-isPlatform = (platformIndex) => {
+willBePlatform = (platformIndex) => {
   const isFirstPlatform = platformIndex === 0;
 
   let isThisAPlatform = false;
