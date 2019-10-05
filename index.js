@@ -44,7 +44,7 @@ const endTiles = {
   }
 };
 
-function draw() {
+draw = () => {
   const canvas = document.getElementById('tutorial');
   const context = canvas.getContext('2d');
 
@@ -53,7 +53,7 @@ function draw() {
   img.addEventListener('load', () => {
     drawPlatform(img);
   });
-}
+};
 
 clearPlatform = (canvas) => {
   const context = canvas.getContext('2d');
