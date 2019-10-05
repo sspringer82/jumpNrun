@@ -1,20 +1,15 @@
-let platformScroll = 0;
-
-const patternWidth = 282;
-const patternHeight = 256;
-
-const targetPatternWidth = patternWidth / 2;
-const targetPatternHeight = (patternHeight / 2);
-
-const normalTileLabels = ['normal', 'oneflower', 'threeflowers'];
-
-const scrollingSpeed = 2;
-const updateEvery = 10;
 let lastUpdate = new Date().getTime();
-const tiles = {};
-const y = (768 - targetPatternHeight - 100);
 
-const normalTiles = {
+// Platform dimensions
+const sourcePlatformWidth = 282;
+const sourcePlatformHeight = 256;
+const targetPlatformWidth = sourcePlatformWidth / 2;
+const targetPlatformHeight = (sourcePlatformHeight / 2);
+
+// Platform definitions and stores
+const platforms = {};
+const normalPlatformLabels = ['normal', 'oneflower', 'threeflowers'];
+const normalPlatforms = {
   normal: {
     label: 'normal',
     x: 946,
@@ -32,7 +27,7 @@ const normalTiles = {
   }
 };
 
-const endTiles = {
+const edgePlatforms = {
   left: {
     label: 'left',
     x: 572,
@@ -45,10 +40,15 @@ const endTiles = {
   }
 };
 
-draw = () => {
-  const canvas = document.getElementById('tutorial');
-  const context = canvas.getContext('2d');
+// Scrolling
+let platformScroll = 0;
+const scrollingSpeed = 2;
+const updateEvery = 10;
 
+// Rendering
+const y = (768 - targetPlatformHeight - 100);
+
+draw = () => {
   const img = new Image();
   img.src = 'assets/platform-tileset.png';
   img.addEventListener('load', () => {
@@ -95,27 +95,27 @@ drawPlatform = (img) => {
   let previouslyDrawnGap = true;
 
   // Draw 1 tile more, otherwise there's ugly popping up
-  let tilesMax = Math.ceil(canvas.width / targetPatternWidth) + 3;
+  let tilesMax = Math.ceil(canvas.width / targetPlatformWidth) + 3;
 
   context.save();
   context.translate(-platformScroll, 0);
   platformScroll = platformScroll + scrollingSpeed;
 
   for (let drawnTiles = 0; drawnTiles < tilesMax; drawnTiles++) {
-    const alreadyDrawnTile = tiles[drawnTiles] !== undefined;
+    const alreadyDrawnTile = platforms[drawnTiles] !== undefined;
 
-    const isStillVisible = x + targetPatternWidth * 2 - platformScroll > 0;
+    const isStillVisible = x + targetPlatformWidth * 2 - platformScroll > 0;
     if (!isStillVisible) {
-      delete tiles[drawnTiles];
+      delete platforms[drawnTiles];
       x = increaseX(x);
       tilesMax++;
       continue;
     }
 
     if (alreadyDrawnTile) {
-      shallDrawPlatform = tiles[drawnTiles] !== 'gap';
+      shallDrawPlatform = platforms[drawnTiles] !== 'gap';
     } else {
-      isFirstPlatform = x < patternWidth;
+      isFirstPlatform = x < sourcePlatformWidth;
       previouslyDrawnGap = !shallDrawPlatform;
       // Randomly decide if drawing platform or nothing
       shallDrawPlatform = isFirstPlatform || previouslyDrawnGap || Math.random() >= 0.4;
@@ -126,28 +126,28 @@ drawPlatform = (img) => {
       // If the next tile is empty, draw a right tile
       const nextIndex = drawnTiles + 1;
       const previousIndex = drawnTiles - 1;
-      if(tiles[nextIndex] === 'gap') {
-        tileToDraw = endTiles.right;
-      } else if (tiles[previousIndex] === 'gap') {
-        tileToDraw = endTiles.left;
+      if(platforms[nextIndex] === 'gap') {
+        tileToDraw = edgePlatforms.right;
+      } else if (platforms[previousIndex] === 'gap') {
+        tileToDraw = edgePlatforms.left;
       } else {
 
         if (alreadyDrawnTile) {
-          const tileToDrawLabel = tiles[drawnTiles];
-          tileToDraw = normalTiles[tileToDrawLabel];
+          const tileToDrawLabel = platforms[drawnTiles];
+          tileToDraw = normalPlatforms[tileToDrawLabel];
         } else {
-          const tileToDrawLabel = normalTileLabels[Math.floor(Math.random() * normalTileLabels.length)];
-          tileToDraw = normalTiles[tileToDrawLabel];
-          tiles[drawnTiles] = tileToDrawLabel;
+          const tileToDrawLabel = normalPlatformLabels[Math.floor(Math.random() * normalPlatformLabels.length)];
+          tileToDraw = normalPlatforms[tileToDrawLabel];
+          platforms[drawnTiles] = tileToDrawLabel;
         }
       }
 
-      context.drawImage(img, tileToDraw.x, tileToDraw.y, patternWidth, patternHeight, x, y, targetPatternWidth, targetPatternHeight);
+      context.drawImage(img, tileToDraw.x, tileToDraw.y, sourcePlatformWidth, sourcePlatformHeight, x, y, targetPlatformWidth, targetPlatformHeight);
 
       // Hitbox
       // context.strokeRect(x, y, targetPatternWidth, targetPatternHeight);
     } else {
-      tiles[drawnTiles] = 'gap';
+      platforms[drawnTiles] = 'gap';
     }
 
     x = increaseX(x);
@@ -159,7 +159,7 @@ drawPlatform = (img) => {
 };
 
 increaseX = (x) => {
-  return x + targetPatternWidth;
+  return x + targetPlatformWidth;
 };
 
 draw();
