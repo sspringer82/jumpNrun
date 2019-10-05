@@ -12,6 +12,7 @@ const scrollingSpeed = 2;
 const updateEvery = 10;
 let lastUpdate = new Date().getTime();
 const tiles = {};
+const y = (768 - targetPatternHeight - 100);
 
 const normalTiles = {
   normal: {
@@ -61,10 +62,21 @@ clearPlatform = (canvas) => {
   context.clearRect(0, targetPatternHeight * 3, canvas.width, targetPatternHeight);
 };
 
-drawPlatform = (img) => {
-  const currentTime = new Date().getTime();
+getCurrentTime = () => {
+  return new Date().getTime();
+};
+
+shallUpdate = () => {
+  const currentTime = getCurrentTime();
   const timeDelta = currentTime - lastUpdate;
-  if (timeDelta < updateEvery) {
+
+  return timeDelta >= updateEvery;
+};
+
+drawPlatform = (img) => {
+  const currentTime = getCurrentTime();
+
+  if (!shallUpdate()) {
     requestAnimationFrame(() => drawPlatform(img));
     return;
   }
@@ -73,7 +85,6 @@ drawPlatform = (img) => {
 
   const canvas = document.getElementById('tutorial');
   const context = canvas.getContext('2d');
-  const y = (768 - targetPatternHeight - 100);
   let x = 0;
 
   context.clearRect(x, y, canvas.width + platformOffset, canvas.height);
