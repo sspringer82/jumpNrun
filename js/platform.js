@@ -4,39 +4,6 @@ const sourcePlatformHeight = 256;
 const targetPlatformWidth = sourcePlatformWidth / 2;
 const targetPlatformHeight = (sourcePlatformHeight / 2);
 
-// Platform definitions and stores
-const normalPlatformLabels = ['normal', 'oneflower', 'threeflowers'];
-const normalPlatforms = {
-  normal: {
-    label: 'normal',
-    x: 946,
-    y: 435
-  },
-  oneflower: {
-    label: 'oneflower',
-    x: 1286,
-    y: 435
-  },
-  threeflowers: {
-    label: 'threeflowers',
-    x: 625,
-    y: 435
-  }
-};
-
-const edgePlatforms = {
-  left: {
-    label: 'left',
-    x: 572,
-    y: 76
-  },
-  right: {
-    label: 'right',
-    x: 1290,
-    y: 76
-  }
-};
-
 // Scrolling
 const scrollingSpeed = 2;
 const updateEvery = 10;
@@ -171,18 +138,17 @@ class Platform {
 
     // If the next platform is empty, draw a right tile
     if (this.platforms[nextIndex] === 'gap') {
-      platformToDraw = edgePlatforms.right;
+      platformToDraw = PlatformType.edge.right;
     } else if (this.previousElementIsGap(platformIndex)) {
-      platformToDraw = edgePlatforms.left;
+      platformToDraw = PlatformType.edge.left;
     } else {
 
       if (this.wasPlatformAlreadyDrawnOnce(platformIndex)) {
         const tileToDrawLabel = this.platforms[platformIndex];
-        platformToDraw = normalPlatforms[tileToDrawLabel];
+        platformToDraw = PlatformType.normal[tileToDrawLabel];
       } else {
-        const tileToDrawLabel = normalPlatformLabels[Math.floor(Math.random() * normalPlatformLabels.length)];
-        platformToDraw = normalPlatforms[tileToDrawLabel];
-        this.platforms[platformIndex] = tileToDrawLabel;
+        platformToDraw = PlatformType.getRandomNormal();
+        this.platforms[platformIndex] = platformToDraw.label;
       }
     }
 
