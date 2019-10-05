@@ -77,6 +77,10 @@ wasPlatformAlreadyDrawnOnce = (platformIndex) => {
   return platforms[platformIndex] !== undefined;
 };
 
+willPlatformStillBeVisible = (x) => {
+  return x + (targetPlatformWidth * 2) - platformScroll > 0;
+}
+
 drawPlatform = (img) => {
   const currentTime = getCurrentTime();
 
@@ -93,12 +97,7 @@ drawPlatform = (img) => {
 
   clearCanvas(canvas);
 
-  // draw until screen is filled horizontally
-  let isFirstPlatform = true;
-  let shallDrawPlatform = true;
-  let previousElementIsGap = true;
-
-  // Draw 1 tile more, otherwise there's ugly popping up
+  // Draw 3 tiles more, otherwise there's ugly popping up
   let platformIndexMax = Math.ceil(canvas.width / targetPlatformWidth) + 3;
 
   context.save();
@@ -106,32 +105,40 @@ drawPlatform = (img) => {
   platformScroll = platformScroll + scrollingSpeed;
 
   for (let platformIndex = 0; platformIndex < platformIndexMax; platformIndex++) {
+    const nextIndex = platformIndex + 1;
+    const previousIndex = platformIndex - 1;
 
-    const isPlatformStillVisible = x + targetPlatformWidth * 2 - platformScroll > 0;
-    if (!isPlatformStillVisible) {
+    const previousElementIsGap = platforms[previousIndex] === 'gap';
+
+    if (!willPlatformStillBeVisible(x)) {
       delete platforms[platformIndex];
       x = increaseX(x);
       platformIndexMax++;
       continue;
     }
 
+    let shallDrawPlatform = true;
+    const isFirstPlatform = platformIndex === 0;
+
     if (wasPlatformAlreadyDrawnOnce(platformIndex)) {
       shallDrawPlatform = platforms[platformIndex] !== 'gap';
+    } else if (isFirstPlatform) {
+      shallDrawPlatform = true;
+    } else if (previousElementIsGap) {
+      // Make sure a gap is never longer than one element
+      shallDrawPlatform = true;
     } else {
-      isFirstPlatform = x < sourcePlatformWidth;
-      previousElementIsGap = !shallDrawPlatform;
-      // Randomly decide if drawing platform or nothing
-      shallDrawPlatform = isFirstPlatform || previousElementIsGap || Math.random() >= 0.4;
+      // Randomly decide if drawing platform or gap
+      shallDrawPlatform = Math.random() >= 0.4;
     }
 
     if (shallDrawPlatform) {
       let platformToDraw;
-      // If the next tile is empty, draw a right tile
-      const nextIndex = platformIndex + 1;
-      const previousIndex = platformIndex - 1;
+
+      // If the next platform is empty, draw a right tile
       if(platforms[nextIndex] === 'gap') {
         platformToDraw = edgePlatforms.right;
-      } else if (platforms[previousIndex] === 'gap') {
+      } else if (previousElementIsGap) {
         platformToDraw = edgePlatforms.left;
       } else {
 
