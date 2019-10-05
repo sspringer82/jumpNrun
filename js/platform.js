@@ -1,5 +1,3 @@
-let lastUpdate = new Date().getTime();
-
 // Platform dimensions
 const sourcePlatformWidth = 282;
 const sourcePlatformHeight = 256;
@@ -7,7 +5,6 @@ const targetPlatformWidth = sourcePlatformWidth / 2;
 const targetPlatformHeight = (sourcePlatformHeight / 2);
 
 // Platform definitions and stores
-const platforms = {};
 const normalPlatformLabels = ['normal', 'oneflower', 'threeflowers'];
 const normalPlatforms = {
   normal: {
@@ -41,18 +38,22 @@ const edgePlatforms = {
 };
 
 // Scrolling
-let platformScroll = 0;
 const scrollingSpeed = 2;
 const updateEvery = 10;
 
-// Rendering
-const y = (512 - targetPlatformHeight - 50);
-
 class Platform {
-  clearCanvas(canvas) {
-    const context = canvas.getContext('2d');
+  constructor() {
+    this.lastUpdate = new Date().getTime();
+    this.platforms = {};
+    this.x = 0;
+    this.y = (512 - targetPlatformHeight - 50);
+    this.canvas = document.getElementById('tutorial');
+    this.context = this.canvas.getContext('2d');
+    this.platformScroll = 0;
+  }
 
-    context.clearRect(0, 0, canvas.width + platformScroll, canvas.height);
+  clearCanvas() {
+    this.context.clearRect(0, 0, this.canvas.width + this.platformScroll, this.canvas.height);
   };
 
   getCurrentTime() {
@@ -61,30 +62,30 @@ class Platform {
 
   shallUpdate() {
     const currentTime = this.getCurrentTime();
-    const timeDelta = currentTime - lastUpdate;
+    const timeDelta = currentTime - this.lastUpdate;
 
     return timeDelta >= updateEvery;
   };
 
   wasPlatformAlreadyDrawnOnce(platformIndex) {
-    return platforms[platformIndex] !== undefined;
+    return this.platforms[platformIndex] !== undefined;
   };
 
-  willPlatformStillBeVisible(x) {
-    return x + (targetPlatformWidth * 2) - platformScroll > 0;
+  willPlatformStillBeVisible() {
+    return this.x + (targetPlatformWidth * 2) - this.platformScroll > 0;
   };
 
   currentElementIsGap(platformIndex) {
-    return platforms[platformIndex] === 'gap';
+    return this.platforms[platformIndex] === 'gap';
   };
 
   currentElementIsPlatform(platformIndex) {
-    return platforms[platformIndex] !== 'gap';
+    return this.platforms[platformIndex] !== 'gap';
   };
 
   previousElementIsGap(platformIndex) {
     const previousIndex = platformIndex - 1;
-    return platforms[previousIndex] === 'gap';
+    return this.platforms[previousIndex] === 'gap';
   };
 
   previousElementIsFirstElementAfterGap(platformIndex) {
@@ -99,48 +100,43 @@ class Platform {
     }
 
     const currentTime = this.getCurrentTime();
-    const canvas = document.getElementById('tutorial');
-    const context = canvas.getContext('2d');
 
-    let x = 0;
+    this.resetX();
 
-    lastUpdate = currentTime;
-    this.clearCanvas(canvas);
+    this.lastUpdate = currentTime;
+    this.clearCanvas();
 
     // Always draw 3 tiles more, otherwise there's ugly popping up
-    let platformIndexMax = Math.ceil(canvas.width / targetPlatformWidth) + 3;
+    let platformIndexMax = Math.ceil(this.canvas.width / targetPlatformWidth) + 3;
 
-    context.save();
+    this.context.save();
     this.scrollPlatform();
 
     for (let platformIndex = 0; platformIndex < platformIndexMax; platformIndex++) {
-      if (!this.willPlatformStillBeVisible(x)) {
-        delete platforms[platformIndex];
-        x = this.increaseX(x);
+      if (!this.willPlatformStillBeVisible()) {
+        delete this.platforms[platformIndex];
+        this.increaseX();
         platformIndexMax++;
         continue;
       }
 
       if (this.willBePlatform(platformIndex)) {
-        this.drawSinglePlatform(platformIndex, x);
+        this.drawSinglePlatform(platformIndex);
       } else {
         this.drawSingleGap(platformIndex);
       }
 
-      x = this.increaseX(x);
+      this.increaseX();
     }
 
-    context.restore();
+    this.context.restore();
 
     requestAnimationFrame(this.draw.bind(this));
   };
 
   scrollPlatform() {
-    const canvas = document.getElementById('tutorial');
-    const context = canvas.getContext('2d');
-
-    context.translate(-platformScroll, 0);
-    platformScroll = platformScroll + scrollingSpeed;
+    this.context.translate(-this.platformScroll, 0);
+    this.increasePlatformScroll();
   };
 
   randomDecisionForPlatform() {
@@ -168,42 +164,47 @@ class Platform {
     return isThisAPlatform;
   };
 
-  drawSinglePlatform(platformIndex, x) {
-    const canvas = document.getElementById('tutorial');
-    const context = canvas.getContext('2d');
+  drawSinglePlatform(platformIndex) {
     const nextIndex = platformIndex + 1;
 
     let platformToDraw;
 
     // If the next platform is empty, draw a right tile
-    if (platforms[nextIndex] === 'gap') {
+    if (this.platforms[nextIndex] === 'gap') {
       platformToDraw = edgePlatforms.right;
     } else if (this.previousElementIsGap(platformIndex)) {
       platformToDraw = edgePlatforms.left;
     } else {
 
       if (this.wasPlatformAlreadyDrawnOnce(platformIndex)) {
-        const tileToDrawLabel = platforms[platformIndex];
+        const tileToDrawLabel = this.platforms[platformIndex];
         platformToDraw = normalPlatforms[tileToDrawLabel];
       } else {
         const tileToDrawLabel = normalPlatformLabels[Math.floor(Math.random() * normalPlatformLabels.length)];
         platformToDraw = normalPlatforms[tileToDrawLabel];
-        platforms[platformIndex] = tileToDrawLabel;
+        this.platforms[platformIndex] = tileToDrawLabel;
       }
     }
 
-    context.drawImage(platformTileset, platformToDraw.x, platformToDraw.y, sourcePlatformWidth, sourcePlatformHeight, x, y, targetPlatformWidth, targetPlatformHeight);
+    this.context.drawImage(platformTileset, platformToDraw.x, platformToDraw.y, sourcePlatformWidth, sourcePlatformHeight, this.x, this.y, targetPlatformWidth, targetPlatformHeight);
 
     // Hitbox
     // context.strokeRect(x, y, targetPlatformWidth, targetPlatformHeight);
   };
 
   drawSingleGap(platformIndex) {
-    platforms[platformIndex] = 'gap';
+    this.platforms[platformIndex] = 'gap';
   };
 
-  increaseX(x) {
-    return x + targetPlatformWidth;
+  resetX() {
+    this.x = 0;
+  }
+
+  increaseX() {
+    this.x = this.x + targetPlatformWidth;
   };
 
+  increasePlatformScroll() {
+    this.platformScroll = this.platformScroll + scrollingSpeed;
+  }
 }
