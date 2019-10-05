@@ -56,10 +56,10 @@ draw = () => {
   });
 };
 
-clearPlatform = (canvas) => {
+clearCanvas = (canvas) => {
   const context = canvas.getContext('2d');
 
-  context.clearRect(0, targetPatternHeight * 3, canvas.width, targetPatternHeight);
+  context.clearRect(0, 0, canvas.width + platformOffset, canvas.height);
 };
 
 getCurrentTime = () => {
@@ -87,7 +87,7 @@ drawPlatform = (img) => {
   const context = canvas.getContext('2d');
   let x = 0;
 
-  context.clearRect(x, y, canvas.width + platformOffset, canvas.height);
+  clearCanvas(canvas);
 
   // draw until screen is filled horizontally
   let isFirstPlatform = true;
