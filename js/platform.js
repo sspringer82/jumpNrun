@@ -4,9 +4,6 @@ const sourcePlatformHeight = 256;
 const targetPlatformWidth = sourcePlatformWidth / 2;
 const targetPlatformHeight = (sourcePlatformHeight / 2);
 
-// Scrolling
-const scrollingSpeed = 2;
-
 class Platform {
   constructor() {
     this.platforms = {};
@@ -17,6 +14,7 @@ class Platform {
     this.platformScroll = 0;
 
     this.updateEvery = 10;
+    this.scrollingSpeed = 2.5;
 
     this.platformTileset = new Image();
   }
@@ -166,6 +164,6 @@ class Platform {
   };
 
   increasePlatformScroll() {
-    this.platformScroll = this.platformScroll + scrollingSpeed;
+    this.platformScroll = this.platformScroll + this.scrollingSpeed;
   }
 }
