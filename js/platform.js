@@ -49,16 +49,16 @@ class Platform {
 
   nextElementIsGap(platformIndex) {
     const nextIndex = platformIndex + 1;
-    return this.platforms[nextIndex] === 'gap';
+    return this.platforms[nextIndex] !== undefined && this.platforms[nextIndex].type === 'gap';
   };
 
   currentElementIsPlatform(platformIndex) {
-    return this.platforms[platformIndex] !== 'gap';
+    return this.platforms[platformIndex] !== undefined && this.platforms[platformIndex].type !== 'gap';
   };
 
   previousElementIsGap(platformIndex) {
     const previousIndex = platformIndex - 1;
-    return this.platforms[previousIndex] === 'gap';
+    return this.platforms[previousIndex] !== undefined && this.platforms[previousIndex].type === 'gap';
   };
 
   previousElementIsFirstElementAfterGap(platformIndex) {
@@ -144,11 +144,17 @@ class Platform {
     } else {
 
       if (this.wasPlatformAlreadyDrawnOnce(platformIndex)) {
-        const tileToDrawLabel = this.platforms[platformIndex];
+        const tileToDrawLabel = this.platforms[platformIndex].type;
         platformToDraw = PlatformType.normal[tileToDrawLabel];
       } else {
         platformToDraw = PlatformType.getRandomNormal();
-        this.platforms[platformIndex] = platformToDraw.label;
+        this.platforms[platformIndex] = {
+          type: platformToDraw.label,
+          x: this.x,
+          y: this.y,
+          width: targetPlatformWidth,
+          height: targetPlatformHeight
+        };
       }
     }
 
@@ -161,7 +167,13 @@ class Platform {
   };
 
   drawSingleGap(platformIndex) {
-    this.platforms[platformIndex] = 'gap';
+    this.platforms[platformIndex] = {
+      type: 'gap',
+      x: this.x,
+      y: this.y,
+      width: targetPlatformWidth,
+      height: targetPlatformHeight
+    };
     this.increaseX();
   };
 
