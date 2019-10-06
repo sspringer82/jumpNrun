@@ -88,8 +88,6 @@ class Platform {
       } else {
         this.drawSingleGap(platformIndex);
       }
-
-      this.increaseX();
     }
 
     this.context.restore();
@@ -148,19 +146,22 @@ class Platform {
     this.context.drawImage(this.platformTileset, platformToDraw.x, platformToDraw.y, sourcePlatformWidth, sourcePlatformHeight, this.x, this.y, targetPlatformWidth, targetPlatformHeight);
 
     // Hitbox
-    // context.strokeRect(x, y, targetPlatformWidth, targetPlatformHeight);
+    // this.context.strokeRect(this.x, this.y, targetPlatformWidth, targetPlatformHeight);
+
+    this.increaseX();
   };
 
   drawSingleGap(platformIndex) {
     this.platforms[platformIndex] = 'gap';
+    this.increaseX();
   };
 
   resetX() {
     this.x = 0;
   }
 
-  increaseX() {
-    this.x = this.x + targetPlatformWidth;
+  increaseX(width = targetPlatformWidth) {
+    this.x = this.x + width;
   };
 
   increasePlatformScroll() {
