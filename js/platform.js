@@ -47,8 +47,9 @@ class Platform {
     return this.x + (targetPlatformWidth * 2) - this.platformScroll > 0;
   };
 
-  currentElementIsGap(platformIndex) {
-    return this.platforms[platformIndex] === 'gap';
+  nextElementIsGap(platformIndex) {
+    const nextIndex = platformIndex + 1;
+    return this.platforms[nextIndex] === 'gap';
   };
 
   currentElementIsPlatform(platformIndex) {
@@ -133,12 +134,10 @@ class Platform {
   };
 
   drawSinglePlatform(platformIndex) {
-    const nextIndex = platformIndex + 1;
-
     let platformToDraw;
 
     // If the next platform is empty, draw a right tile
-    if (this.platforms[nextIndex] === 'gap') {
+    if (this.nextElementIsGap(platformIndex)) {
       platformToDraw = PlatformType.edge.right;
     } else if (this.previousElementIsGap(platformIndex)) {
       platformToDraw = PlatformType.edge.left;
