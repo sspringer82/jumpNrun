@@ -30,6 +30,9 @@ class Player {
     this.blinkEvery = 3;
     this.lastBlink = 3;
 
+    this.y = this.canvas.height - 303;
+    this.x = 10;
+
     this.state = this.stateIdle;
   }
 
@@ -59,6 +62,15 @@ class Player {
 
       case this.stateJumping:
         return 100;
+    }
+  }
+
+  getBoundingBox() {
+    return {
+      x: this.x,
+      y: this.y,
+      width: this.targetWidth,
+      height: this.targetHeight
     }
   }
 
@@ -102,12 +114,16 @@ class Player {
 
   draw() {
     const sourceStart = (this.currentPhase * this.sourceWidth[this.state]) - this.sourceWidth[this.state];
-    let y = this.canvas.height - 303;
+    let y = this.y;
     if (this.state === this.stateJumping) {
       y = y - 100;
     }
+
+    // y = y * 1.0981;
+    // this.y = y;
+
     const image = this.images[this.state];
 
-    this.context.drawImage(image, sourceStart, 0, this.sourceWidth[this.state], this.sourceHeight, 10, y, this.targetWidth, this.targetHeight);
+    this.context.drawImage(image, sourceStart, 0, this.sourceWidth[this.state], this.sourceHeight, this.x, y, this.targetWidth, this.targetHeight);
   }
 }
