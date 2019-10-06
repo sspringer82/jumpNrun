@@ -62,20 +62,39 @@ class Player {
     }
   }
 
+  setState(state) {
+    if (this.state === this.stateJumping && this.currentPhase < this.phases[this.stateJumping]) {
+      return;
+    }
+    this.state = state;
+    this.currentPhase = 1;
+  }
+
   update() {
     this.currentPhase++;
 
-    if (this.state === this.stateIdle) {
-      if (this.lastBlink === 0 && this.currentPhase === this.phases[this.state]) {
-        this.lastBlink = this.blinkEvery;
-      } else if (this.lastBlink > 0 && this.currentPhase > this.phases[this.state] - 1) {
-        this.currentPhase = 1;
-        this.lastBlink--;
-      }
-    } else {
-      if (this.currentPhase > this.phases[this.state]) {
-        this.currentPhase = 1;
-      }
+    switch(this.state) {
+      case this.stateIdle:
+        if (this.lastBlink === 0 && this.currentPhase === this.phases[this.state]) {
+          this.lastBlink = this.blinkEvery;
+        } else if (this.lastBlink > 0 && this.currentPhase > this.phases[this.state] - 1) {
+          this.currentPhase = 1;
+          this.lastBlink--;
+        }
+        break;
+
+      case this.stateJumping:
+        if (this.currentPhase > this.phases[this.state]) {
+          this.setState(this.stateRunning);
+          this.currentPhase = 1;
+        }
+        break;
+
+      default:
+        if (this.currentPhase > this.phases[this.state]) {
+          this.currentPhase = 1;
+        }
+        break;
     }
   }
 

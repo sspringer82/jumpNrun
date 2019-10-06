@@ -18,6 +18,20 @@ init = () => {
   ]).then(() => {
     renderer.subscribe(platform);
     renderer.subscribe(player);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowUp') {
+      player.setState(player.stateJumping);
+    }
+
+    if (event.key === 'ArrowDown') {
+      player.setState(player.stateIdle);
+    }
+
+    if (event.key === 'ArrowRight') {
+      player.setState(player.stateRunning);
+    }
   })
 };
 
