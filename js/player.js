@@ -62,6 +62,8 @@ class Player {
     }
   }
 
+  consumeStateChange(state) {}
+
   setState(state) {
     if (this.state === this.stateJumping && this.currentPhase < this.phases[this.stateJumping]) {
       return;

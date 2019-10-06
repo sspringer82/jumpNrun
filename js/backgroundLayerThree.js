@@ -6,6 +6,9 @@ class BackgroundLayerThree {
     this.context = this.canvas.getContext('2d');
 
     this.offset = 0;
+    this.idleScrollingSpeed = 0;
+    this.movingScrollingSpeed = 1;
+    this.scrollingSpeed = this.idleScrollingSpeed;
   }
 
   init() {
@@ -27,11 +30,19 @@ class BackgroundLayerThree {
     this.context.translate(-this.offset, 0);
   }
 
+  consumeStateChange(state) {
+    if (state === GameLoop.stateMoving) {
+      this.scrollingSpeed = this.movingScrollingSpeed;
+    } else if (state === GameLoop.stateIdle) {
+      this.scrollingSpeed = this.idleScrollingSpeed;
+    }
+  }
+
   update() {
     if (this.offset >= this.background.width) {
       this.offset = 0;
     } else {
-      this.offset = this.offset + 1;
+      this.offset = this.offset + this.scrollingSpeed;
     }
   }
 

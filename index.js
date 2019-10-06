@@ -1,4 +1,6 @@
 init = () => {
+  const gameLoop = new GameLoop();
+
   const renderer = new Renderer();
   const platform = new Platform();
   const backgroundLayerOne = new BackgroundLayerOne();
@@ -6,6 +8,12 @@ init = () => {
   const backgroundLayerThree = new BackgroundLayerThree();
   const backgroundLayerFour = new BackgroundLayerFour();
   const player = new Player();
+
+  gameLoop.subscribe(player);
+  gameLoop.subscribe(platform);
+  gameLoop.subscribe(backgroundLayerTwo);
+  gameLoop.subscribe(backgroundLayerThree);
+  gameLoop.subscribe(backgroundLayerFour);
 
   backgroundLayerOne.init().then(() => renderer.subscribe(backgroundLayerOne));
   backgroundLayerTwo.init().then(() => renderer.subscribe(backgroundLayerTwo));
@@ -24,14 +32,17 @@ init = () => {
     switch(event.key) {
       case 'ArrowUp':
         player.setState(player.stateJumping);
+        gameLoop.setState(GameLoop.stateMoving);
         break;
 
       case 'ArrowDown':
         player.setState(player.stateIdle);
+        gameLoop.setState(GameLoop.stateIdle);
         break;
 
       case 'ArrowRight':
         player.setState(player.stateRunning);
+        gameLoop.setState(GameLoop.stateMoving);
         break;
     }
   });

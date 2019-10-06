@@ -14,7 +14,9 @@ class Platform {
     this.platformScroll = 0;
 
     this.updateEvery = 10;
-    this.scrollingSpeed = 3.5;
+    this.idleScrollingSpeed = 0;
+    this.movingScrollingSpeed = 3.5;
+    this.scrollingSpeed = this.idleScrollingSpeed;
 
     this.platformTileset = new Image();
   }
@@ -62,6 +64,14 @@ class Platform {
     const previousIndex = platformIndex - 1;
     return this.previousElementIsGap(previousIndex);
   };
+
+  consumeStateChange(state) {
+    if (state === GameLoop.stateMoving) {
+      this.scrollingSpeed = this.movingScrollingSpeed;
+    } else if (state === GameLoop.stateIdle) {
+      this.scrollingSpeed = this.idleScrollingSpeed;
+    }
+  }
 
   update() {
     this.increasePlatformScroll();
