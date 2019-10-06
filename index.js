@@ -21,18 +21,20 @@ init = () => {
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowUp') {
-      player.setState(player.stateJumping);
-    }
+    switch(event.key) {
+      case 'ArrowUp':
+        player.setState(player.stateJumping);
+        break;
 
-    if (event.key === 'ArrowDown') {
-      player.setState(player.stateIdle);
-    }
+      case 'ArrowDown':
+        player.setState(player.stateIdle);
+        break;
 
-    if (event.key === 'ArrowRight') {
-      player.setState(player.stateRunning);
+      case 'ArrowRight':
+        player.setState(player.stateRunning);
+        break;
     }
-  })
+  });
 };
 
 init();
