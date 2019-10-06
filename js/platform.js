@@ -14,7 +14,7 @@ class Platform {
     this.platformScroll = 0;
 
     this.updateEvery = 10;
-    this.scrollingSpeed = 2.5;
+    this.scrollingSpeed = 3.5;
 
     this.platformTileset = new Image();
   }
