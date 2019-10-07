@@ -10,9 +10,11 @@ init = () => {
   const player = new Player();
   const music = new Music();
   const jump = new Jump();
+  const death = new Death();
 
   collision.setPlayer(player);
   collision.setPlatform(platform);
+  collision.setGameLoop(gameLoop);
 
   gameLoop.subscribe(player);
   gameLoop.subscribe(platform);
@@ -22,6 +24,7 @@ init = () => {
   gameLoop.subscribe(collision);
   gameLoop.subscribe(music);
   gameLoop.subscribe(jump);
+  gameLoop.subscribe(death);
 
   renderer.subscribe(collision);
   backgroundLayerOne.init().then(() => renderer.subscribe(backgroundLayerOne));
@@ -37,24 +40,7 @@ init = () => {
     renderer.subscribe(player);
   });
 
-  document.addEventListener('keydown', (event) => {
-    switch(event.key) {
-      case 'ArrowUp':
-        player.setState(player.stateJumping);
-        gameLoop.setState(GameLoop.stateJumping);
-        break;
-
-      case 'ArrowDown':
-        player.setState(player.stateIdle);
-        gameLoop.setState(GameLoop.stateIdle);
-        break;
-
-      case 'ArrowRight':
-        player.setState(player.stateRunning);
-        gameLoop.setState(GameLoop.stateMoving);
-        break;
-    }
-  });
+  const movement = new Movement(player, gameLoop);
 };
 
 init();

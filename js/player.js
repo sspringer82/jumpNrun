@@ -23,14 +23,15 @@ class Player {
     this.sourceWidth[this.stateRunning] = 2000 / this.phases[this.stateRunning];
     this.sourceWidth[this.stateJumping] = 2800 / this.phases[this.stateJumping];
     this.sourceHeight = 500;
-    this.targetWidth = this.sourceWidth[this.stateIdle] / 2;
-    this.targetHeight = this.sourceHeight / 2;
+    this.targetWidth = this.sourceWidth[this.stateIdle] / 3;
+    this.targetHeight = this.sourceHeight / 3;
 
     this.currentPhase = 1;
     this.blinkEvery = 3;
     this.lastBlink = 3;
+    this.isOnPlatform = true;
 
-    this.y = this.canvas.height - 303;
+    this.y = this.canvas.height - 283;
     this.x = 10;
 
     this.state = this.stateIdle;
@@ -112,6 +113,10 @@ class Player {
     }
   }
 
+  setIsOnPlatform(isOnPlatform) {
+    this.isOnPlatform = isOnPlatform;
+  }
+
   draw() {
     const sourceStart = (this.currentPhase * this.sourceWidth[this.state]) - this.sourceWidth[this.state];
     let y = this.y;
@@ -119,8 +124,10 @@ class Player {
       y = y - 100;
     }
 
-    // y = y * 1.0981;
-    // this.y = y;
+    if (!this.isOnPlatform && this.state !== this.stateJumping) {
+      y = y * 1.0981;
+      this.y = y;
+    }
 
     const image = this.images[this.state];
 

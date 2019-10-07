@@ -33,7 +33,7 @@ class BackgroundLayerThree {
   consumeStateChange(state) {
     if (state === GameLoop.stateMoving) {
       this.scrollingSpeed = this.movingScrollingSpeed;
-    } else if (state === GameLoop.stateIdle) {
+    } else if (state === GameLoop.stateIdle || state === GameLoop.stateDead) {
       this.scrollingSpeed = this.idleScrollingSpeed;
     }
   }

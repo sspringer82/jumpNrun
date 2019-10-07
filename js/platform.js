@@ -81,7 +81,7 @@ class Platform {
   consumeStateChange(state) {
     if (state === GameLoop.stateMoving) {
       this.scrollingSpeed = this.movingScrollingSpeed;
-    } else if (state === GameLoop.stateIdle) {
+    } else if (state === GameLoop.stateIdle || state === GameLoop.stateDead) {
       this.scrollingSpeed = this.idleScrollingSpeed;
     }
   }
@@ -153,23 +153,25 @@ class Platform {
       platformToDraw = PlatformType.edge.right;
     } else if (this.previousElementIsGap(platformIndex)) {
       platformToDraw = PlatformType.edge.left;
-    } else {
-
-      if (this.wasPlatformAlreadyDrawnOnce(platformIndex)) {
-        const tileToDrawLabel = this.platforms[platformIndex].type;
-        platformToDraw = PlatformType.normal[tileToDrawLabel];
+    } else if (this.wasPlatformAlreadyDrawnOnce(platformIndex)) {
+      const tileToDrawLabel = this.platforms[platformIndex].type;
+      if (tileToDrawLabel === 'left' || tileToDrawLabel === 'right') {
+        platformToDraw = PlatformType.edge[tileToDrawLabel];
       } else {
-        platformToDraw = PlatformType.getRandomNormal();
-        this.platforms[platformIndex] = {
-          type: platformToDraw.label,
-          x: this.x,
-          y: this.y,
-          offset: this.platformScroll,
-          width: targetPlatformWidth,
-          height: targetPlatformHeight
-        };
+        platformToDraw = PlatformType.normal[tileToDrawLabel];
       }
+    } else {
+      platformToDraw = PlatformType.getRandomNormal();
     }
+
+    this.platforms[platformIndex] = {
+      type: platformToDraw.label,
+      x: this.x,
+      y: this.y,
+      offset: this.platformScroll,
+      width: targetPlatformWidth,
+      height: targetPlatformHeight
+    };
 
     this.context.drawImage(this.platformTileset, platformToDraw.x, platformToDraw.y, sourcePlatformWidth, sourcePlatformHeight, this.x, this.y, targetPlatformWidth, targetPlatformHeight);
 
@@ -188,7 +190,7 @@ class Platform {
       width: targetPlatformWidth,
       height: targetPlatformHeight
     };
-    this.increaseX();
+    this.increaseX(targetPlatformWidth);
   };
 
   resetX() {

@@ -9,6 +9,10 @@ class GameLoop {
     return this.state;
   }
 
+  isState(state) {
+    return this.state === state;
+  }
+
   setState(state) {
     this.state = state;
     this.propagateState();
@@ -28,3 +32,4 @@ class GameLoop {
 GameLoop.stateIdle = 'idle';
 GameLoop.stateMoving = 'moving';
 GameLoop.stateJumping = 'jumping';
+GameLoop.stateDead = 'dead';

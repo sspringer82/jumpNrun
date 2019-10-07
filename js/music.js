@@ -2,19 +2,19 @@ class Music {
   constructor() {
     this.state = GameLoop.stateIdle;
 
-    this.audio = new Audio('audio/music.mp3');
+    this.audio = new Audio('audio/music2.wav');
     this.audio.autoplay = false;
     this.audio.load();
+    this.audio.loop = true;
   }
 
   consumeStateChange(state) {
     if (state === GameLoop.stateMoving && this.state !== GameLoop.stateMoving) {
-      this.audio.loop = true;
       this.audio.currentTime = 0;
       this.audio.play();
 
       this.state = state;
-    } else if (state === GameLoop.stateIdle) {
+    } else if (state === GameLoop.stateIdle || state === GameLoop.stateDead) {
       this.audio.pause();
 
       this.state = state;
