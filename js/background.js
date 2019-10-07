@@ -1,7 +1,7 @@
 class Background {
   constructor(context) {
-    this.context = context;
-    this.image = new Image();
+      this.image = new Image();
+      this.context = context;
   }
 
   init() {
