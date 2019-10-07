@@ -18,6 +18,8 @@ class Platform {
     this.movingScrollingSpeed = 3.5;
     this.scrollingSpeed = this.idleScrollingSpeed;
 
+    this.typeGap = 'gap';
+
     this.platformTileset = new Image();
   }
 
@@ -39,6 +41,16 @@ class Platform {
     return this.updateEvery;
   }
 
+  getBoundingBoxes() {
+    const boundingBoxes = [];
+    for (let platformIndex in this.platforms) {
+      boundingBoxes.push(this.platforms[platformIndex]);
+    }
+    return boundingBoxes.filter((box) => {
+      return box.type !== this.typeGap;
+    });
+  }
+
   wasPlatformAlreadyDrawnOnce(platformIndex) {
     return this.platforms[platformIndex] !== undefined;
   };
@@ -49,16 +61,16 @@ class Platform {
 
   nextElementIsGap(platformIndex) {
     const nextIndex = platformIndex + 1;
-    return this.platforms[nextIndex] !== undefined && this.platforms[nextIndex].type === 'gap';
+    return this.platforms[nextIndex] !== undefined && this.platforms[nextIndex].type === this.typeGap;
   };
 
   currentElementIsPlatform(platformIndex) {
-    return this.platforms[platformIndex] !== undefined && this.platforms[platformIndex].type !== 'gap';
+    return this.platforms[platformIndex] !== undefined && this.platforms[platformIndex].type !== this.typeGap;
   };
 
   previousElementIsGap(platformIndex) {
     const previousIndex = platformIndex - 1;
-    return this.platforms[previousIndex] !== undefined && this.platforms[previousIndex].type === 'gap';
+    return this.platforms[previousIndex] !== undefined && this.platforms[previousIndex].type === this.typeGap;
   };
 
   previousElementIsFirstElementAfterGap(platformIndex) {
@@ -152,6 +164,7 @@ class Platform {
           type: platformToDraw.label,
           x: this.x,
           y: this.y,
+          offset: this.platformScroll,
           width: targetPlatformWidth,
           height: targetPlatformHeight
         };
@@ -168,9 +181,10 @@ class Platform {
 
   drawSingleGap(platformIndex) {
     this.platforms[platformIndex] = {
-      type: 'gap',
+      type: this.typeGap,
       x: this.x,
       y: this.y,
+      offset: this.platformScroll,
       width: targetPlatformWidth,
       height: targetPlatformHeight
     };

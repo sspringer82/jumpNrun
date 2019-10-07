@@ -27,3 +27,4 @@ class GameLoop {
 
 GameLoop.stateIdle = 'idle';
 GameLoop.stateMoving = 'moving';
+GameLoop.stateJumping = 'jumping';

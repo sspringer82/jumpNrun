@@ -1,6 +1,6 @@
 init = () => {
   const gameLoop = new GameLoop();
-
+  const collision = new Collision();
   const renderer = new Renderer();
   const platform = new Platform();
   const backgroundLayerOne = new BackgroundLayerOne();
@@ -8,13 +8,22 @@ init = () => {
   const backgroundLayerThree = new BackgroundLayerThree();
   const backgroundLayerFour = new BackgroundLayerFour();
   const player = new Player();
+  const music = new Music();
+  const jump = new Jump();
+
+  collision.setPlayer(player);
+  collision.setPlatform(platform);
 
   gameLoop.subscribe(player);
   gameLoop.subscribe(platform);
   gameLoop.subscribe(backgroundLayerTwo);
   gameLoop.subscribe(backgroundLayerThree);
   gameLoop.subscribe(backgroundLayerFour);
+  gameLoop.subscribe(collision);
+  gameLoop.subscribe(music);
+  gameLoop.subscribe(jump);
 
+  renderer.subscribe(collision);
   backgroundLayerOne.init().then(() => renderer.subscribe(backgroundLayerOne));
   backgroundLayerTwo.init().then(() => renderer.subscribe(backgroundLayerTwo));
   backgroundLayerThree.init().then(() => renderer.subscribe(backgroundLayerThree));
@@ -32,7 +41,7 @@ init = () => {
     switch(event.key) {
       case 'ArrowUp':
         player.setState(player.stateJumping);
-        gameLoop.setState(GameLoop.stateMoving);
+        gameLoop.setState(GameLoop.stateJumping);
         break;
 
       case 'ArrowDown':
