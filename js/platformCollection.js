@@ -4,6 +4,7 @@ class PlatformCollection {
     this.context = context;
     this.platforms = [];
     this.updateEvery = 35;
+    this.y = 282;
   }
 
   init() {
@@ -24,7 +25,7 @@ class PlatformCollection {
   
     return Promise.all(initializedPlatforms).then(() => {
       this.platforms.forEach((platform, index) => {
-        platform.updatePosition(index * 141, 282);
+        platform.updatePosition(index * platform.width, this.y);
       });
     });
   }

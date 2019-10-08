@@ -5,6 +5,7 @@ class Player {
   
   constructor(context) {
     this.lastUpdate = 0;
+    this.isDead = false;
 
     this.context = context;
     this.currentAnimationStep = 0;
@@ -62,8 +63,18 @@ class Player {
         this.y = this.y + 55;
       }
 
+      if (this.isDead) {
+        this.y = this.y * 1.0981;
+        this.x = this.x + 3;
+      }
+
       this.lastUpdate = timestamp;
     }
+  }
+
+  die() {
+    this.isDead = true;
+    this.updateEvery = 10;
   }
 
   render() {
