@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const context = canvas.getContext('2d');
 
   const background = new Background(context);
-  background.init().then(() => background.render());
+  const backgroundPromise = background.init();
 
   const platforms = [
     new Platform(context),
@@ -18,16 +18,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const initializedPlatforms = platforms.map((platform) => platform.init());
 
-  Promise.all(initializedPlatforms).then(() => {
+  const platformPromise = Promise.all(initializedPlatforms).then(() => {
     platforms.forEach((platform, index) => {
       platform.updatePosition(index * 141, 282);
-      platform.render();
     });
   });
 
   const player = new Player(context);
-  player.init().then(() => {
+  const playerPromise = player.init().then(() => {
     player.updatePosition(10, 202);
-    player.render();
   });
+
+  Promise.all([playerPromise, platformPromise, backgroundPromise]).then(() => {
+    const loop = new Loop(background, player, platforms);
+    requestAnimationFrame(loop.step.bind(loop));
+  })
 });

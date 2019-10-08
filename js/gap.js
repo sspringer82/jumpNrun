@@ -5,8 +5,8 @@ class Gap {
     
     this.x = 0;
     this.y = 0;
-    this.height = 260;
-    this.width = 282;
+    this.height = 130;
+    this.width = 141;
   }
 
   init() {

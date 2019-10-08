@@ -4,6 +4,8 @@ class Player {
   static run = 'run';
   
   constructor(context) {
+    this.lastUpdate = 0;
+
     this.context = context;
     this.currentAnimationStep = 0;
     this.images = {
@@ -20,6 +22,7 @@ class Player {
     this.sourceWidth = 325;
     this.height = this.sourceHeight / 3;
     this.width = this.sourceWidth / 3;
+    this.updateEvery = 200;
   }
 
   init() {
@@ -36,9 +39,26 @@ class Player {
     ]);
   }
 
+  advanceAnimationStep() {
+    const maxStep = this.images[this.currentState].steps;
+    this.currentAnimationStep = (this.currentAnimationStep + 1 < maxStep) ? this.currentAnimationStep + 1 : 0;
+  }
+
   updatePosition(x, y) {
     this.x = x;
     this.y = y;
+  }
+
+  shouldUpdate(timestamp) {
+    return (timestamp - this.lastUpdate >= this.updateEvery);
+  }
+
+  update(timestamp) {
+    if (this.shouldUpdate(timestamp)) {
+      this.advanceAnimationStep();
+
+      this.lastUpdate = timestamp;
+    }
   }
 
   render() {
