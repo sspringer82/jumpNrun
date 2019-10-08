@@ -6,7 +6,7 @@ class Loop {
       this.platformCollection = platformCollection;
       this.lastUpdate = 0;
       this.isMoving = false;
-
+      this.socket = new WebSocket('ws://localhost:8081');
     }
 
     init(worker) {
@@ -21,7 +21,7 @@ class Loop {
     update(timestamp) {
       this.player.update(timestamp);
       if (this.isMoving) {
-        this.platformCollection.update(timestamp);
+        this.platformCollection.update(this.socket);
         this.isPlayerDead();
       }
     }

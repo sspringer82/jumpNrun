@@ -5,6 +5,7 @@ class PlatformCollection {
     this.platforms = [];
     this.updateEvery = 35;
     this.y = 282;
+    this.count = 0;
   }
 
   init() {
@@ -30,13 +31,15 @@ class PlatformCollection {
     });
   }
 
-  update() {
+  update(socket) {
     this.platforms.forEach((platform, index) => {
       if (platform.x + platform.width < 0) {
         const p = this.platforms.splice(index, 1)[0];
         const lastPlatform = this.platforms[this.platforms.length - 1];
         p.updatePosition(lastPlatform.x + lastPlatform.width, p.y);
         this.platforms.push(p)
+
+        socket.send(++this.count);
       } else {
         platform.updatePosition(platform.x - 5, platform.y);
       }
