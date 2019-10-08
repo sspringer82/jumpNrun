@@ -10,7 +10,7 @@ class Loop {
     }
 
     init(worker) {
-      worker.onessage = (isDead) => {
+      worker.onmessage = ({data: isDead}) => {
         if (isDead) {
           this.toggleMoving();
           this.player.die();
@@ -22,20 +22,15 @@ class Loop {
       this.player.update(timestamp);
       if (this.isMoving) {
         this.platformCollection.update(timestamp);
-        if (this.isPlayerDead()) {
-          this.toggleMoving();
-          this.player.die();
-        }
+        this.isPlayerDead();
       }
     }
 
     isPlayerDead() {
-      // worker.postMessage({platforms: this.platformCollection.platforms, player: this.player});
-      
-      const isPlayerInGap = this.platformCollection.platforms
-        .filter((platform) => platform instanceof Gap)
-        .some(gap => gap.x <= this.player.x && gap.x + gap.width >= this.player.x + this.player.width);
-      return isPlayerInGap && this.player.currentState !== Player.jump;
+      worker.postMessage({
+        platforms: this.platformCollection.platforms.map(platform => platform.toJSON()), 
+        player: this.player.toJSON()
+      });
     }
   
     render() {

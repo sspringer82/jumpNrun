@@ -106,4 +106,14 @@ class Player {
     }
   }
 
+  toJSON() {
+    return {
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height,
+      currentState: this.currentState
+    }
+  }
+
 }

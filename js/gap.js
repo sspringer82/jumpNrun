@@ -20,4 +20,14 @@ class Gap {
 
   render() {
   }
+
+  toJSON() {
+    return {
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height,
+      type: 'gap'
+    }
+  }
 }
