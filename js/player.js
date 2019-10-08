@@ -85,7 +85,7 @@ class Player {
   }
 
   jump() {
-    if (this.currentState !== Player.jump) {
+    if (this.currentState === Player.run) {
       this.currentState = Player.jump;
       this.updateEvery = 100;
       this.y = this.y - 55;
