@@ -2,6 +2,7 @@ class Player {
   static idle = 'idle';
   static jump = 'jump';
   static run = 'run';
+  static die = 'die';
   
   constructor(context) {
     this.lastUpdate = 0;
@@ -13,7 +14,12 @@ class Player {
       [Player.idle]: {image: new Image(), steps: 4},
       [Player.jump]: {image: new Image(), steps: 8},
       [Player.run]: {image: new Image(), steps: 6},
-    }
+    };
+
+    this.sounds = {
+      [Player.jump]: new Audio('audio/jump2.wav'),
+      [Player.die]: new Audio('audio/drop.wav'),
+    };
 
     this.currentState = Player.idle;
     
@@ -75,6 +81,9 @@ class Player {
   die() {
     this.isDead = true;
     this.updateEvery = 10;
+    const sound = this.sounds[Player.die]
+    sound.currentTime = 0;
+    sound.play();
   }
 
   render() {
@@ -103,6 +112,9 @@ class Player {
       this.updateEvery = 100;
       this.y = this.y - 55;
       this.currentAnimationStep = 0;
+      const sound = this.sounds[Player.jump];
+      sound.currentTime = 0;
+      sound.play();
     }
   }
 
