@@ -82,6 +82,8 @@ class Player {
     const sourceStartX = this.currentAnimationStep * this.sourceWidth;
 
     this.context.drawImage(image.image, sourceStartX, 0, this.sourceWidth, this.sourceHeight, this.x, this.y, this.width, this.height);
+    // Hitbox visualization
+    // this.context.strokeRect(this.x, this.y, this.width, this.height);
   }
 
   toggleMoving(isMoving) {

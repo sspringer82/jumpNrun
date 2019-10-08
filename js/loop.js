@@ -6,6 +6,16 @@ class Loop {
       this.platformCollection = platformCollection;
       this.lastUpdate = 0;
       this.isMoving = false;
+
+    }
+
+    init(worker) {
+      worker.onessage = (isDead) => {
+        if (isDead) {
+          this.toggleMoving();
+          this.player.die();
+        }
+      }
     }
 
     update(timestamp) {
@@ -20,6 +30,8 @@ class Loop {
     }
 
     isPlayerDead() {
+      // worker.postMessage({platforms: this.platformCollection.platforms, player: this.player});
+      
       const isPlayerInGap = this.platformCollection.platforms
         .filter((platform) => platform instanceof Gap)
         .some(gap => gap.x <= this.player.x && gap.x + gap.width >= this.player.x + this.player.width);

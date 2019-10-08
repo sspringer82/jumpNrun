@@ -23,5 +23,7 @@ class Platform {
 
   render() {
     this.context.drawImage(this.image, this.x, this.y, this.width, this.height);
+    // Hitbox visualization
+    // this.context.strokeRect(this.x, this.y, this.width, this.height);
   }
 }
