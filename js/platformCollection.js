@@ -31,17 +31,29 @@ class PlatformCollection {
     });
   }
 
-  update(socket) {
+  update() {
     this.platforms.forEach((platform, index) => {
       if (platform.x + platform.width < 0) {
         const p = this.platforms.splice(index, 1)[0];
         const lastPlatform = this.platforms[this.platforms.length - 1];
         p.updatePosition(lastPlatform.x + lastPlatform.width, p.y);
         this.platforms.push(p)
-
-        socket.send(++this.count);
       } else {
         platform.updatePosition(platform.x - 5, platform.y);
+      }
+    });
+  }
+
+  updateFromJson(jsonData) {
+    this.platforms = [];
+    jsonData.forEach((platformData, index) => {
+      if (platformData.type === 'platform') {
+        const platform = new Platform(this.context);
+        platform.init().then(() => platform.updatePosition(platformData.x, platformData.y));
+        this.platforms[index] = platform;
+      } else {
+        const gap = new Gap(this.context);
+        this.platforms[index] = gap;
       }
     });
   }
@@ -52,4 +64,7 @@ class PlatformCollection {
   });
   }
 
+  toJSON() {
+    return this.platforms.map(platform => platform.toJSON())
+  }
 }

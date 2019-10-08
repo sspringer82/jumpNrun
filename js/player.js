@@ -78,6 +78,18 @@ class Player {
     }
   }
 
+  updateState(state) {
+    if (state === Player.jump) {
+      this.jump();
+    }
+
+    if (state === Player.die) {
+      this.die();
+    }
+
+    this.currentState = state;
+  }
+
   die() {
     this.isDead = true;
     this.updateEvery = 10;
