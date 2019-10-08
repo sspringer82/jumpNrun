@@ -5,24 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const background = new Background(context);
   const backgroundPromise = background.init();
 
-  const platforms = [
-    new Platform(context),
-    new Gap(context),
-    new Platform(context),
-    new Platform(context),
-    new Platform(context),
-    new Gap(context),
-    new Platform(context),
-    new Platform(context),
-  ];
-
-  const initializedPlatforms = platforms.map((platform) => platform.init());
-
-  const platformPromise = Promise.all(initializedPlatforms).then(() => {
-    platforms.forEach((platform, index) => {
-      platform.updatePosition(index * 141, 282);
-    });
-  });
+  const platformCollection = new PlatformCollection(context);
+  const platformPromise = platformCollection.init();
 
   const player = new Player(context);
   const playerPromise = player.init().then(() => {
@@ -30,7 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   Promise.all([playerPromise, platformPromise, backgroundPromise]).then(() => {
-    const loop = new Loop(background, player, platforms);
+    const loop = new Loop(background, player, platformCollection);
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Enter') {
+        loop.toggleMoving();
+      } else if (e.code === 'Space') {
+        player.jump();
+      }
+    })
     requestAnimationFrame(loop.step.bind(loop));
   })
 });

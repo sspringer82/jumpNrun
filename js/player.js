@@ -57,6 +57,11 @@ class Player {
     if (this.shouldUpdate(timestamp)) {
       this.advanceAnimationStep();
 
+      if (this.currentState === Player.jump && this.currentAnimationStep === 0) {
+        this.currentState = Player.run;
+        this.y = this.y + 55;
+      }
+
       this.lastUpdate = timestamp;
     }
   }
@@ -67,4 +72,25 @@ class Player {
 
     this.context.drawImage(image.image, sourceStartX, 0, this.sourceWidth, this.sourceHeight, this.x, this.y, this.width, this.height);
   }
+
+  toggleMoving(isMoving) {
+    this.currentAnimationStep = 0;
+    if (isMoving) {
+      this.currentState = Player.run;
+      this.updateEvery = 100;
+    } else {
+      this.currentState = Player.idle;
+      this.updateEvery = 200;
+    }
+  }
+
+  jump() {
+    if (this.currentState !== Player.jump) {
+      this.currentState = Player.jump;
+      this.updateEvery = 100;
+      this.y = this.y - 55;
+      this.currentAnimationStep = 0;
+    }
+  }
+
 }
