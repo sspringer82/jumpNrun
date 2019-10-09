@@ -1,4 +1,6 @@
 class Player {
+  static idle = 'idle';
+
   constructor(context) {
     this.context = context;
     this.images = {
