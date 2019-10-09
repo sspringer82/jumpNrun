@@ -98,4 +98,14 @@ class Player {
     // Hitbox visualization
     // this.context.strokeRect(this.x, this.y, this.width, this.height);
   }
+
+  toJSON() {
+    return {
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height,
+      currentState: this.currentState
+    }
+  }
 }

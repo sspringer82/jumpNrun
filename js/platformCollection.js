@@ -50,4 +50,8 @@ class PlatformCollection {
       platform.render();
     });
   }
+
+  toJSON() {
+    return this.platforms.map(platform => platform.toJSON());
+  }
 }

@@ -8,6 +8,17 @@ class Loop {
     this.isMoving = false;
   }
 
+  init(worker) {
+    this.worker = worker;
+    // event.data = {boolean}
+    worker.onmessage = ({ data: isDead }) => {
+      if (isDead) {
+        this.toggleMoving();
+        this.player.die();
+      }
+    };
+  }
+
   toggleMoving() {
     if (this.isMoving && this.player.currentState === Player.jump || this.player.isDead) {
       return;
@@ -28,10 +39,10 @@ class Loop {
   }
 
   isPlayerDead() {
-    const isPlayerInGap = this.platformCollection.platforms
-      .filter((platform) => platform instanceof Gap)
-      .some(gap => gap.x <= this.player.x && gap.x + gap.width >= this.player.x + this.player.width);
-    return isPlayerInGap && this.player.currentState !== Player.jump;
+    this.worker.postMessage({
+      platforms: this.platformCollection.toJSON(),
+      player: this.player.toJSON(),
+    });
   }
 
   render() {

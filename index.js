@@ -1,3 +1,5 @@
+const worker = new Worker('js/worker.js');
+
 document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('sheep-and-run');
   const context = canvas.getContext('2d');
@@ -11,8 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const player = new Player(context);
   const playerPromise = player.init();
 
+
   Promise.all([backbroundPromise, platformPromise, playerPromise]).then(() => {
     const loop = new Loop(context, player, background, platformCollection);
+    loop.init(worker);
 
     document.addEventListener('keydown', (e) => {
       if (e.code === 'Enter') {
