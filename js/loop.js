@@ -41,6 +41,11 @@ class Loop {
     this.stream.update(timestamp);
   }
 
+  setSpectatorMode(spectatorMode) {
+    this.spectatorMode = spectatorMode;
+    this.stream.setSpectatorMode(spectatorMode);
+  }
+
   isPlayerDead() {
     this.worker.postMessage({
       platforms: this.platformCollection.toJSON(),

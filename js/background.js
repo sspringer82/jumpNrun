@@ -6,9 +6,9 @@ class Background {
     
   }
 
-  init(source) {
+  init() {
     return new Promise((resolve) => {
-      this.image.src = source;
+      this.image.src = 'assets/background1.png';
 
       this.image.addEventListener('load', resolve);
     });

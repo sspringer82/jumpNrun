@@ -73,6 +73,23 @@ class Player {
     return (timestamp - this.lastUpdate >= this.updateEvery);
   }
 
+  updateState(state) {
+    if (state === Player.jump) {
+      this.jump();
+    }
+
+    if (state === Player.die) {
+      this.die();
+    }
+
+    this.currentState = state;
+  }
+
+  updatePosition(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
   update(timestamp) {
     if (this.shouldUpdate(timestamp)) {
       this.advanceAnimationStep();

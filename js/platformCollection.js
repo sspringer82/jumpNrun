@@ -54,4 +54,20 @@ class PlatformCollection {
   toJSON() {
     return this.platforms.map(platform => platform.toJSON());
   }
+
+  updateFromJson(jsonData) {
+    this.platforms = [];
+    jsonData.forEach((platformData, index) => {
+      if (platformData.type === 'platform') {
+        const platform = new Platform(this.context);
+        platform
+          .init()
+          .then(() => platform.updatePosition(platformData.x, platformData.y));
+        this.platforms[index] = platform;
+      } else {
+        const gap = new Gap(this.context);
+        this.platforms[index] = gap;
+      }
+    });
+  }
 }

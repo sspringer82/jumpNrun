@@ -1,36 +1,41 @@
 const worker = new Worker('js/worker.js');
 
 document.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const spectatorMode = urlParams.get('spectator') !== null;
+
   const canvas = document.getElementById('sheep-and-run');
   const context = canvas.getContext('2d');
 
   const background = new Background(context);
-  const backbroundPromise = background.init('assets/background1.png');
+  const backgroundPromise = background.init();
 
   const platformCollection = new PlatformCollection(context);
   const platformPromise = platformCollection.init();
 
   const player = new Player(context);
-  const playerPromise = player.init();
+  const playerPromise = player.init().then(() => {
+    player.updatePosition(10, 202);
+  });
 
   const stream = new Stream(player, platformCollection);
 
-  Promise.all([backbroundPromise, platformPromise, playerPromise]).then(() => {
+  Promise.all([playerPromise, platformPromise, backgroundPromise]).then(() => {
     const loop = new Loop(context, player, background, platformCollection, stream);
     loop.init(worker);
 
-    document.addEventListener('keydown', (e) => {
-      if (e.code === 'Enter') {
-        // stop start moving
-        loop.toggleMoving();
-      } else if (e.code === 'Space') {
-        // jump
-        player.jump();
-      }
-    })
+    if (spectatorMode) {
+      loop.setSpectatorMode(true);
+    } else {
+      document.addEventListener('keydown', e => {
+        if (e.code === 'Enter') {
+          loop.toggleMoving();
+        } else if (e.code === 'Space') {
+          player.jump();
+        }
+      });
+    }
 
-
-    player.y = 202;
     requestAnimationFrame(loop.step.bind(loop));
-  }) 
+  });
 });
