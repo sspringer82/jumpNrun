@@ -4,9 +4,10 @@ class Stream {
     this.platformCollection = platformCollection;
 
     this.lastUpdate = 0;
-    this.updateEvery = 20;
+    this.updateEvery = 100;
 
-    this.socket = new WebSocket('ws://localhost:8081');
+    const host = document.location.hostname;
+    this.socket = new WebSocket(`ws://${host}:8081`);
     this.spectatorMode = false;
     this.isSocketReady = false;
 
@@ -21,9 +22,6 @@ class Stream {
         const {player, platforms} = JSON.parse(event.data);
         this.player.updatePosition(player.x, player.y);
         this.player.updateState(player.currentState);
-        if (player.currentState === Player.jump) {
-          this.player.jump();
-        }
         this.platformCollection.updateFromJson(platforms);
       }
     } else {
