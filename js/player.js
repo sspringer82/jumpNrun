@@ -6,7 +6,7 @@ class Player {
     this.images = {
       [Player.idle]: {image: new Image(), steps: 4},
     };
-s
+
     this.currentState = Player.idle;
     
     this.x = 0;
