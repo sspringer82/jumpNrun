@@ -1,11 +1,12 @@
 class Loop {
 
-  constructor(context, player, background, platformCollection) {
+  constructor(context, player, background, platformCollection, stream) {
     this.context = context;
     this.player = player;
     this.background = background;
     this.platformCollection = platformCollection;
     this.isMoving = false;
+    this.stream = stream;
   }
 
   init(worker) {
@@ -36,6 +37,8 @@ class Loop {
         this.player.die();
       }
     }
+
+    this.stream.update(timestamp);
   }
 
   isPlayerDead() {

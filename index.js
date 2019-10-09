@@ -13,9 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const player = new Player(context);
   const playerPromise = player.init();
 
+  const stream = new Stream(player, platformCollection);
 
   Promise.all([backbroundPromise, platformPromise, playerPromise]).then(() => {
-    const loop = new Loop(context, player, background, platformCollection);
+    const loop = new Loop(context, player, background, platformCollection, stream);
     loop.init(worker);
 
     document.addEventListener('keydown', (e) => {
