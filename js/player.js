@@ -43,6 +43,8 @@ class Player {
       new Promise((resolve) => this.images[Player.idle].image.addEventListener('load', () => resolve())),
       new Promise((resolve) => this.images[Player.jump].image.addEventListener('load', () => resolve())),
       new Promise((resolve) => this.images[Player.run].image.addEventListener('load', () => resolve())),
+      new Promise((resolve) => this.sounds[Player.jump].addEventListener('canplaythrough', () => resolve())),
+      new Promise((resolve) => this.sounds[Player.die].addEventListener('canplaythrough', () => resolve())),
     ]);
   }
 
