@@ -17,5 +17,8 @@ class Gap {
     this.y = y;
   }
 
-  render() {}
+  render() {
+    // Hitbox visualization
+    // this.context.strokeRect(this.x, this.y, this.width, this.height);
+  }
 }

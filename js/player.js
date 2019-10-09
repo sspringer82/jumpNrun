@@ -12,7 +12,6 @@ class Player {
     };
 
     this.currentState = Player.idle;
-    this.isMoving = false;
     
     this.x = 0;
     this.y = 0;
@@ -23,6 +22,12 @@ class Player {
     
     this.lastUpdate = 0;
     this.updateEvery = 200;
+    this.isDead = false;
+  }
+
+  die() {
+    this.isDead = true;
+    this.updateEvery = 10;
   }
 
   init() {
@@ -75,6 +80,12 @@ class Player {
         this.currentState = Player.run;
         this.y = this.y + 55;
       }
+
+      if (this.isDead) {
+        this.y = this.y * 1.0981;
+        this.x = this.x + 3;
+      }
+
       this.lastUpdate = timestamp;
     }
   }
@@ -83,6 +94,7 @@ class Player {
     const image = this.images[this.currentState];
     const sourceStartX = this.currentAnimationStep * this.sourceWidth;
     this.context.drawImage(image.image, sourceStartX, 0, this.sourceWidth, this.sourceHeight, this.x, this.y, this.width, this.height);
+    
     // Hitbox visualization
     // this.context.strokeRect(this.x, this.y, this.width, this.height);
   }

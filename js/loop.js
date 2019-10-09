@@ -9,17 +9,29 @@ class Loop {
   }
 
   toggleMoving() {
+    if (this.isMoving && this.player.currentState === Player.jump || this.player.isDead) {
+      return;
+    }
     this.isMoving = !this.isMoving;
     this.player.setIsMoving(this.isMoving);
   }
 
   update(timestamp) {
-    // update all the things
-    // update player animation state
     this.player.update(timestamp);
     if (this.isMoving) {
       this.platformCollection.update();
+      if (this.isPlayerDead()) {
+        this.toggleMoving();
+        this.player.die();
+      }
     }
+  }
+
+  isPlayerDead() {
+    const isPlayerInGap = this.platformCollection.platforms
+      .filter((platform) => platform instanceof Gap)
+      .some(gap => gap.x <= this.player.x && gap.x + gap.width >= this.player.x + this.player.width);
+    return isPlayerInGap && this.player.currentState !== Player.jump;
   }
 
   render() {
